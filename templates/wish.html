@@ -1,0 +1,69 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2>Wish Summary</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for orde_item in object %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+			<img src="{{ orde_item.item.image.url }}" style="width: 130px;"> 
+            </td>
+            <td>{{ orde_item.item.title }}</td>
+            <td>{{ orde_item.item.price }}</td>
+            <td>
+            	
+            	{{ orde_item.quantity }}
+            	<a href="{% url 'core:add-to-wish' orde_item.item.slug %}"><i class="fas fa-plus ml-3"></i></a>
+            </td>
+            <td>
+              {% if orde_item.item.discount_price %}
+                  ${{ orde_item.get_total_discount_item_price}}
+                  <span class="badge badge-primary">  Saving ${{ orde_item.get_amount_saved }}</span>
+              {% else %}
+                  ${{ orde_item.get_total_item_price}}
+              {% endif %}
+              <a style="color: red" href="{% url 'core:remove-from-wish' orde_item.item.slug %}">
+                <i class="fas fa-trash float-right"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+			<td colspan="5">Your cart is empty</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+        {% if object.coupon %}
+        <tr>
+          <td colspan="5"><b>Coupon : </b></td>
+          <td>- ${{ object.coupon.amount }}</td>
+        </tr>
+        {% endif%}
+        {% if object.get_total %}
+        <tr>
+        	<td colspan="5"><b>Orde Total : </b></td>
+        	<td><b>${{ object.get_total }}</b></td>
+        </tr>
+        
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
